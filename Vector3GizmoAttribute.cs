@@ -1,7 +1,10 @@
 using Unity.VisualScripting;
-using UnityEditor;
-using UnityEditor.EditorTools;
 using UnityEngine;
+
+#if UNITY_EDITOR
+	using UnityEditor;
+	using UnityEditor.EditorTools;
+#endif
 
 public class Vector3GizmoAttribute : PropertyAttribute
 {
