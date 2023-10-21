@@ -66,14 +66,16 @@ public class Vector3GizmoDrawer : PropertyDrawer
 		else if (_stateIndex == 1)
 		{
 			//local space
-			SceneView.lastActiveSceneView.LookAt(property.vector3Value);
 			Vector3Handle.ShowTool(property, false);
+			
+			Vector3 worldOffset = property.serializedObject.targetObject.GameObject().transform.position;
+			SceneView.lastActiveSceneView.LookAt(property.vector3Value + worldOffset);
 		}
 		else if (_stateIndex == 2)
 		{
 			//world space
-			SceneView.lastActiveSceneView.LookAt(property.vector3Value);
 			Vector3Handle.ShowTool(property);
+			SceneView.lastActiveSceneView.LookAt(property.vector3Value);
 		}
 	}
 
