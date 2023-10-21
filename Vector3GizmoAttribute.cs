@@ -62,7 +62,7 @@ public class Vector3GizmoDrawer : PropertyDrawer
 		_stateIndex++;
 		_stateIndex = _stateIndex %= TotalState;
 
-		Vector3Handle.HideTool();
+		Vector3Handler.HideTool();
 		
 		if (_stateIndex == 0)
 		{
@@ -72,7 +72,7 @@ public class Vector3GizmoDrawer : PropertyDrawer
 		else if (_stateIndex == 1)
 		{
 			//local space
-			Vector3Handle.ShowTool(property, false);
+			Vector3Handler.ShowTool(property, false);
 			
 			Vector3 worldOffset = property.serializedObject.targetObject.GameObject().transform.position;
 			SceneView.lastActiveSceneView.LookAt(property.vector3Value + worldOffset);
@@ -80,7 +80,7 @@ public class Vector3GizmoDrawer : PropertyDrawer
 		else if (_stateIndex == 2)
 		{
 			//world space
-			Vector3Handle.ShowTool(property);
+			Vector3Handler.ShowTool(property);
 			SceneView.lastActiveSceneView.LookAt(property.vector3Value);
 		}
 	}
@@ -91,7 +91,7 @@ public class Vector3GizmoDrawer : PropertyDrawer
 	}
 }
 
-public class Vector3Handle : EditorTool
+public class Vector3Handler : EditorTool
 {
 	private static SerializedProperty _property;
 	private static bool _isWorldPosition;
@@ -101,7 +101,7 @@ public class Vector3Handle : EditorTool
 		_isWorldPosition = isWorldPosition;
 		_property = property;
 			
-		ToolManager.SetActiveTool<Vector3Handle>();
+		ToolManager.SetActiveTool<Vector3Handler>();
 
 		Selection.selectionChanged -= SelectionChanged;
 		Selection.selectionChanged += SelectionChanged;
@@ -125,7 +125,7 @@ public class Vector3Handle : EditorTool
 			return;
 		}
 
-		if (ToolManager.activeToolType == typeof(Vector3Handle))
+		if (ToolManager.activeToolType == typeof(Vector3Handler))
 		{
 			HideTool();
 		}
