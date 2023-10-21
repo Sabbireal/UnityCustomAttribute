@@ -45,82 +45,82 @@ public class SpritePreviewAttribute : PropertyAttribute
 		{
 			EditorGUI.BeginProperty(position, label, property);
 			
-			GUI.Label(position, property.displayName);
-
-			if (property.objectReferenceValue != null && attribute is SpritePreviewAttribute spritePreviewAttribute)
+			SpritePreviewAttribute spritePreviewAttribute = attribute as SpritePreviewAttribute;
+			if (spritePreviewAttribute == null)
 			{
-				position.x += 100f;
-				
+				EditorGUI.PropertyField(position, property, label, true);
+				EditorGUI.EndProperty();
+				return;
+			}
+			
+			GUI.Label(position, property.displayName);
+			position.x += 100f;
+			switch (spritePreviewAttribute.Type)
+			{
+				case SpritePreviewAttribute.STRING_TYPE:
+					SerializedProperty widthProperty = property.serializedObject.FindProperty(spritePreviewAttribute.WidthField);
+					SerializedProperty heightProperty = property.serializedObject.FindProperty(spritePreviewAttribute.HeightField);
 
-				switch (spritePreviewAttribute.Type)
-				{
-					case SpritePreviewAttribute.STRING_TYPE:
-						
-						SerializedProperty widthProperty = property.serializedObject.FindProperty(spritePreviewAttribute.WidthField);
-						SerializedProperty heightProperty = property.serializedObject.FindProperty(spritePreviewAttribute.HeightField);
+					if (widthProperty.propertyType == SerializedPropertyType.Float)
+					{
+						position.width = widthProperty.floatValue;
+					}
+					else if (widthProperty.propertyType == SerializedPropertyType.Integer)
+					{
+						position.width = widthProperty.intValue;
+					}
 
-						if (widthProperty.propertyType == SerializedPropertyType.Float)
-						{
-							position.width = widthProperty.floatValue;
-						}
-						else if (widthProperty.propertyType == SerializedPropertyType.Integer)
-						{
-							position.width = widthProperty.intValue;
-						}
-
-						if (heightProperty.propertyType == SerializedPropertyType.Float)
-						{
-							position.height = heightProperty.floatValue;
-						}
-						else if (heightProperty.propertyType == SerializedPropertyType.Integer)
-						{
-							position.height = heightProperty.intValue;
-						}
-						break;
+					if (heightProperty.propertyType == SerializedPropertyType.Float)
+					{
+						position.height = heightProperty.floatValue;
+					}
+					else if (heightProperty.propertyType == SerializedPropertyType.Integer)
+					{
+						position.height = heightProperty.intValue;
+					}
+					break;
 					
-					default:
-						position.width = spritePreviewAttribute.Width;
-						position.height = spritePreviewAttribute.Height;
-						break;
-				}
+				default:
+					position.width = spritePreviewAttribute.Width;
+					position.height = spritePreviewAttribute.Height;
+					break;
+			}
 
-				position.width = Mathf.Max(MIN_SIZE, position.width);
-				position.height = Mathf.Max(MIN_SIZE, position.height);
+			position.width = Mathf.Max(MIN_SIZE, position.width);
+			position.height = Mathf.Max(MIN_SIZE, position.height);
 				
-				property.objectReferenceValue = EditorGUI.ObjectField(position, property.objectReferenceValue, typeof(Sprite), false);
-			}
-			else {
-				EditorGUI.PropertyField(position, property, true);
-			}
+			property.objectReferenceValue = EditorGUI.ObjectField(position, property.objectReferenceValue, typeof(Sprite), false);
 
 			EditorGUI.EndProperty();
 		}
 		
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
-			if (property.objectReferenceValue != null && attribute is SpritePreviewAttribute spritePreviewAttribute) {
-				switch (spritePreviewAttribute.Type)
-				{
-					case SpritePreviewAttribute.STRING_TYPE:
-						SerializedProperty heightProperty = property.serializedObject.FindProperty(spritePreviewAttribute.HeightField);
-						
-						if (heightProperty.propertyType == SerializedPropertyType.Float)
-						{
-							return Mathf.Max(MIN_SIZE, heightProperty.floatValue); 
-						}
-
-						if (heightProperty.propertyType == SerializedPropertyType.Integer)
-						{
-							return Mathf.Max(MIN_SIZE, heightProperty.intValue);
-						}
-						
-						break;
-					default:
-						return spritePreviewAttribute.Height;
-				}
+			SpritePreviewAttribute spritePreviewAttribute = attribute as SpritePreviewAttribute;
+			if (spritePreviewAttribute == null)
+			{
+				return base.GetPropertyHeight(property, label);
 			}
 
-			return base.GetPropertyHeight(property, label);
+			switch (spritePreviewAttribute.Type)
+			{
+				case SpritePreviewAttribute.STRING_TYPE:
+					SerializedProperty heightProperty = property.serializedObject.FindProperty(spritePreviewAttribute.HeightField);
+						
+					if (heightProperty.propertyType == SerializedPropertyType.Float)
+					{
+						return Mathf.Max(MIN_SIZE, heightProperty.floatValue); 
+					}
+
+					if (heightProperty.propertyType == SerializedPropertyType.Integer)
+					{
+						return Mathf.Max(MIN_SIZE, heightProperty.intValue);
+					}
+						
+					break;
+			}
+			
+			return spritePreviewAttribute.Height;
 		}
 	}
 #endif
