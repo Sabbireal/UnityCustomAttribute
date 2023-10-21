@@ -159,8 +159,16 @@ public class Vector3Handle : EditorTool
 	private void DrawValueText(Vector3 spawnPoint)
 	{
 		string prefix = _isWorldPosition ? "World space : " : "Local Space : ";
-		string value = " X: " + spawnPoint.x + " Y: " + spawnPoint.y + " Z: " + spawnPoint.z;
-		Handles.Label(spawnPoint, prefix + value);
+		
+		Transform trans = _property.serializedObject.targetObject.GameObject().transform;
+
+		Vector3 tempPos = spawnPoint;
+		bool isInLocalSpace = !_isWorldPosition && trans.parent != null;
+		if (isInLocalSpace) tempPos -= trans.position;
+		string value = " X: " + tempPos.x + " Y: " + tempPos.y + " Z: " + tempPos.z;
+
+		Vector3 offset = Vector3.one * 2;
+		Handles.Label(spawnPoint + offset, prefix + value);
 	}
 
 	private void DrawLine(Vector3 spawnPoint)
