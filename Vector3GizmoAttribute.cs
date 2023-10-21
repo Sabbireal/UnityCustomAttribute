@@ -32,11 +32,17 @@ public class Vector3GizmoDrawer : PropertyDrawer
 		EditorGUI.EndProperty();
 	}
 
+	public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+	{
+		return EditorGUI.GetPropertyHeight(property);
+	}
+
 	private void DrawButton(Rect position, SerializedProperty property)
 	{
 		float buttonXpos = position.x - EditorGUIUtility.singleLineHeight * 1.1f;
 		float buttonWidth = EditorGUIUtility.singleLineHeight * 1.2f;
-		Rect buttonRect = new Rect(buttonXpos, position.y, buttonWidth, position.height);
+		float buttonHeight = EditorGUIUtility.singleLineHeight;
+		Rect buttonRect = new Rect(buttonXpos, position.y, buttonWidth, buttonHeight);
 
 		GUIStyle guiStyle = new("button")
 		{
