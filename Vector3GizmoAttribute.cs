@@ -56,20 +56,22 @@ public class Vector3GizmoDrawer : PropertyDrawer
 		_stateIndex++;
 		_stateIndex = _stateIndex %= TotalState;
 
+		Vector3Handle.HideTool();
+		
 		if (_stateIndex == 0)
 		{
-			Vector3Handle.HideTool();
+			//X
 			SceneView.lastActiveSceneView.LookAt(property.serializedObject.targetObject.GameObject().transform.position);
 		}
 		else if (_stateIndex == 1)
 		{
-			Vector3Handle.HideTool();
+			//local space
 			SceneView.lastActiveSceneView.LookAt(property.vector3Value);
 			Vector3Handle.ShowTool(property, false);
 		}
 		else if (_stateIndex == 2)
 		{
-			Vector3Handle.HideTool();
+			//world space
 			SceneView.lastActiveSceneView.LookAt(property.vector3Value);
 			Vector3Handle.ShowTool(property);
 		}
@@ -126,26 +128,37 @@ public class Vector3Handle : EditorTool
 		if (_property == null) return;
 		Vector3 spawnPoint = _property.vector3Value;
 
-		if (!_isWorldPosition)
-		{
-			Transform transform = _property.serializedObject.targetObject.GameObject().transform;
-			if(transform.parent != null) spawnPoint += transform.position;
-		}
-		
+		Transform trans = _property.serializedObject.targetObject.GameObject().transform;
+		bool isInLocalSpace = !_isWorldPosition && trans.parent != null;
+	
+		if (isInLocalSpace) spawnPoint += trans.position;
+
 		EditorGUI.BeginChangeCheck();
 		spawnPoint = Handles.PositionHandle(spawnPoint, Quaternion.identity);
+		
+		DrawValueText(spawnPoint);
+		DrawLine(spawnPoint);
 
 		if (EditorGUI.EndChangeCheck())
 		{
-			if (!_isWorldPosition)
-			{
-				Transform transform = _property.serializedObject.targetObject.GameObject().transform;
-				if(transform.parent != null) spawnPoint -= transform.position;
-			}
+			if (isInLocalSpace) spawnPoint -= trans.position;
 				
 			_property.vector3Value = spawnPoint;
 			_property.serializedObject.ApplyModifiedProperties();
 		}
+	}
+
+	private void DrawValueText(Vector3 spawnPoint)
+	{
+		string prefix = _isWorldPosition ? "World space : " : "Local Space : ";
+		string value = " X: " + spawnPoint.x + " Y: " + spawnPoint.y + " Z: " + spawnPoint.z;
+		Handles.Label(spawnPoint, prefix + value);
+	}
+
+	private void DrawLine(Vector3 spawnPoint)
+	{
+		Vector3 from = _isWorldPosition ? Vector3.zero : _property.serializedObject.targetObject.GameObject().transform.position;
+		Handles.DrawLine(from, spawnPoint);
 	}
 }
 #endif
