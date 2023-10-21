@@ -158,7 +158,7 @@ public class Vector3Handle : EditorTool
 	private void DrawLine(Vector3 spawnPoint)
 	{
 		Vector3 from = _isWorldPosition ? Vector3.zero : _property.serializedObject.targetObject.GameObject().transform.position;
-		Handles.DrawLine(from, spawnPoint);
+		Handles.DrawDottedLine(from, spawnPoint, 1);
 	}
 }
 #endif
